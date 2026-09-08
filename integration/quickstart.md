@@ -12,9 +12,8 @@ Underlying cbBTC: 0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf
 The full human-readable ABI is in [`reference/interfaces.md`](../reference/interfaces.md). Minimal fragments for a deposit flow:
 
 ```ts
-import { createPublicClient, createWalletClient, http, parseAbi, parseUnits } from "viem";
+import { createPublicClient, createWalletClient, custom, http, parseAbi, parseUnits } from "viem";
 import { mainnet } from "viem/chains";
-import { privateKeyToAccount } from "viem/accounts";
 
 const VAULT = "0x009c02a73706a68e0aE0209235408206E4F53709";
 
@@ -36,11 +35,15 @@ export const vaultAbi = parseAbi([
 
 export const publicClient = createPublicClient({ chain: mainnet, transport: http() });
 
-// You supply the connected signer (e.g. from a wallet connector) and the running
-// user address:
-export const walletClient = createWalletClient({ account: privateKeyToAccount("0x..."), chain: mainnet, transport: http() });
+// Wallet client from the browser's injected provider (e.g. MetaMask et al.) —
+// no private key is ever embedded in browser code. The signer is resolved from
+// the connected wallet at call time. (`window.ethereum` is the EIP-1193 provider;
+// in a wagmi/React app use the connector instead: const walletClient = useWalletClient().data.)
+export const walletClient = createWalletClient({ chain: mainnet, transport: custom((window as any).ethereum) });
+// `user` (the signer) and `receiver` come from your connected wallet — e.g. from
+// wagmi's useAccount().address — NOT a private key. Replace the placeholders below:
 const user: `0x${string}` = "0x...";          // the connected signer's address
-const receiver: `0x${string}` = "0x...";      // whoever receives claims
+const receiver: `0x${string}` = "0x...";      // whoever receives claims (default: user)
 ```
 
 ## 2. Deposit flow (deposit request → wait for settlement → claim)
@@ -56,6 +59,7 @@ const requestId = BigInt(await publicClient.readContract({
 // b. request: transfers cbBTC into the Staging contract, queues in the open epoch
 //    (writeContract returns the transaction hash, not the requestId)
 const txHash = await walletClient.writeContract({
+  account: user, // connected signer (injected provider; no key in code)
   address: VAULT, abi: vaultAbi, functionName: "requestDeposit",
   args: [parseUnits("0.1", 8), user, user], // cbBTC has 8 decimals
 });
@@ -70,6 +74,7 @@ const claimable = await publicClient.readContract({
 // d. claim: mints/transfers vault shares to the receiver
 if (claimable > 0n) {
   await walletClient.writeContract({
+    account: user, // connected signer (injected provider; no key in code)
     address: VAULT, abi: vaultAbi, functionName: "deposit",
     args: [claimable, receiver, user],
   });
@@ -89,6 +94,7 @@ const shareAmount = await publicClient.readContract({
   address: VAULT, abi: vaultAbi, functionName: "balanceOf", args: [user],
 });
 const txHash = await walletClient.writeContract({
+  account: user, // connected signer (injected provider; no key in code)
   address: VAULT, abi: vaultAbi, functionName: "requestRedeem",
   args: [shareAmount, user, user],
 });
@@ -99,12 +105,18 @@ const claimableShares = BigInt(await publicClient.readContract({
   address: VAULT, abi: vaultAbi, functionName: "claimableRedeemRequest",
   args: [requestId, user],
 }));
-// claimableRedeemRequest returns SHARES; redeem(amount, ...) takes shares.
-// (Do NOT pass shares to withdraw, whose first argument is assets.)
-await walletClient.writeContract({
-  address: VAULT, abi: vaultAbi, functionName: "redeem",
-  args: [claimableShares, receiver, user],
-});
+// claimableRedeemRequest returns SHARES; redeem(amount, ...)) takes shares.
+//(Do NOT pass shares to withdraw, whose first argument is assets.)
+// claimableShares > 0th only after the epoch settles; before settlement it is
+// zero, and redeem(0, ...) would revert SA__ZeroAmount — guard/poll first.
+// (wave watchers for the EpochSettled event or poll this view until it is non-zero.)
+if (claimableShares > 0n) {
+  await walletClient.writeContract({
+    account: user, // connected signer (injected provider; no key in code)
+    address: VAULT, abi: vaultAbi, functionName: "redeem",
+    args: [claimableShares, receiver, user],
+  });
+}
 ```
 
 ## 4. Watch settlement progress off-chain
