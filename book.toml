@@ -1,0 +1,10 @@
+[book]
+title = "K3 Vault Documentation"
+authors = ["K3 Capital"]
+description = "Documentation for the K3 epoch-staged ERC-7540 vault infrastructure and the K3 cbBTC Vault."
+language = "en"
+multilingual = false
+
+[build]
+build-dir = "book"
+create-missing = true
