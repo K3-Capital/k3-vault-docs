@@ -1,8 +1,0 @@
-# GitBook configuration (Git Sync)
-# Current GitBook Git Sync reads SUMMARY.md for the table of contents and serves
-# content from the repository root by default — the standard layout this repo uses.
-# This file pins the structure explicitly. See https://docs.gitbook.com
-root: ./
-structure:
-  readme: README.md
-  summary: SUMMARY.md
