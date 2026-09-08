@@ -78,14 +78,26 @@ function redeemClaimReserves() external view returns (uint256); // reserved-but-
 ## Example: full status for a request
 
 ```ts
-const [current, frozen] = await Promise.all([
-  publicClient.readContract({ address: VAULT, abi: vaultAbi, functionName: "currentEpochId" }),
-  publicClient.readContract({ address: VAULT, abi: vaultAbi, functionName: "frozenEpochId" }),
-]);
+// `requestId` is already known (e.g. from a DepositRequest event or the epoch id).
+// currentEpochId/frozenEpochId return uint40 — viem infers `number`; convert to
+// bigint so they compare with a bigint requestId.
+const current = BigInt(await publicClient.readContract({
+  address: VAULT, abi: vaultAbi, functionName: "currentEpochId",
+}));
+const frozen = BigInt(await publicClient.readContract({
+  address: VAULT, abi: vaultAbi, functionName: "frozenEpochId",
+}));
 
-const state = frozen === 0n ? "settling idle"
-  : requestId === frozen ? "closed, awaiting settlement"
-  : requestId < current ? "settled" : "open";
+// Classify by request id against the epoch state. `frozenEpochId` is 0 when no
+// epoch is closed-but-unsettled — so compare against `currentEpochId` FIRST.
+const state =
+  requestId === current
+    ? "open"                           // request in the epoch accepting new requests
+    : frozen !== 0n && requestId === frozen
+      ? "closed, awaiting settlement"  // frozen epoch, not yet settled
+      : requestId < current
+        ? "settled"                    // an older, already-settled epoch
+        : "invalid/unknown";           // future id (requestId > current) — never valid
 
 const claimable = await publicClient.readContract({
   address: VAULT, abi: vaultAbi, functionName: "claimableDepositRequest",

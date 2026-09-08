@@ -10,7 +10,7 @@ function requestDeposit(uint256 assets, address controller, address owner)
 - **Moves funds**: pulls exactly `assets` cbBTC from `owner` into the Staging contract via `safeTransferFrom` — approve the vault for the underlying token first. The credited amount is the **balance delta actually received**, so fee-on-transfer tokens would credit net amounts (the cbBTC vault uses a plain token).
 - **Queues** the assets under `controller` in the currently open epoch and returns `requestId == currentEpochId()`.
 - Emits `DepositRequest(controller, owner, requestId, sender, received)`.
-- Reverts: `SA__ZeroAmount` (assets == 0 or 0 received), `SA__ZeroAddress`, `SA__NotAuthorized` (see below), `SA__FrozenEpochPending`/paused handling is upstream — `whenNotPaused` blocks the call while paused.
+- Reverts: `SA__ZeroAmount` (assets == 0 or 0 received), `SA__ZeroAddress`, `SA__NotAuthorized` (see below), and `EnforcedPause` while the wrapper is paused (`whenNotPaused`). Note: a **frozen** epoch does **not** block deposit requests — requests land in the newly opened epoch (`currentEpochId`) even while another epoch is closed-but-unsettled. `SA__FrozenEpochPending` is raised by `closeEpoch`, `setSmartAccount`, and asset `rescue` — not by request submission.
 - Guarded by `nonReentrant`.
 
 ## Authorization matrix

@@ -32,10 +32,12 @@ The allowance path means a plain ERC-4626-style flow works: approve the vault fo
 ## Example
 
 ```ts
-// a. capture the open epoch — the request will join it (requestId == epochId)
-const requestId = await publicClient.readContract({
+// a. capture the open epoch — the request will join it (requestId == epochId).
+//    currentEpochId returns uint40 (viem infers `number`); claim views take
+//    uint256, so wrap in BigInt to keep the requestId a `bigint`.
+const requestId = BigInt(await publicClient.readContract({
   address: VAULT, abi: vaultAbi, functionName: "currentEpochId",
-});
+}));
 
 // b. request: escrows vault shares in Staging
 const balance = await publicClient.readContract({

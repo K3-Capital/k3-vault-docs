@@ -7,7 +7,7 @@ No. This is a fully async ERC-7540 vault. Requests queue into epochs; they becom
 After the epoch containing your request is closed and settled. Check `claimableDepositRequest`/`claimableRedeemRequest` (and the [subgraph](../integration/subgraph.md) for history). Only the oldest settled epoch in your queue is claimable at a time.
 
 **What price will I get?**
-The price is fixed at settlement: deposit shares = `depositAssets × supply/nav` at the settlement snapshots (floor rounding); redeem assets = `redeemShares × nav/supply` (floor rounding). Use the permissionless `previewSettlement(nav, supply, deposits, redeems)` to simulate. Historical prices: `epochPrices` in the subgraph.
+The price is fixed at settlement: deposit shares = `depositAssets × (supply+1) / (nav+1)` at the settlement snapshots (floor rounding, OZ virtual offset zero); redeem assets = `redeemShares × (nav+1) / (supply+1)` (floor rounding). Use the permissionless `previewSettlement(nav, supply, deposits, redeems)` to simulate. Historical prices: `epochPrices` in the subgraph.
 
 **What is `requestId`?**
 The id of the epoch the request joined — `requestId == epochId`. It is used in every pending/claimable view.

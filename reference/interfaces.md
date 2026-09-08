@@ -33,7 +33,9 @@ interface IEpochStagedERC7540Vault {
 }
 ```
 
-## Full human-readable ABI (integrator surface on the proxy)
+## Supported integration ABI (integrator surface on the proxy)
+
+The fragment below covers the **integration-relevant** subset that a frontend typically needs: ERC-7540 async request/claim entrypoints, ERC-4626 views, operator controls, and vault state. It is **not** the complete ABI. It intentionally omits: the full ERC-20 surface (`transfer`, `approve`, `allowance`, `transferFrom`, `decimals`, `name`, `symbol`, `totalSupply`, events), the two-argument claim overloads (`deposit(assets, receiver)`, `mint(shares, receiver)`, `redeem(shares, receiver)`, `withdraw(assets, receiver)`), ownership/access-control/ERC-165 functions (`owner`, `transferOwnership`, `grantRole`/`renounceRole`, `supportsInterface`, `erc165` interface restoring), and the full event/error set. For those, read the source interfaces (`src/IEpochStagedERC7540Vault.sol`, `SmartAccountWrapper.sol`) and the [events](./events.md) / [errors](../integration/errors.md) pages. The fragments on the [quickstart](../integration/quickstart.md) and integration pages are a further minimal subset for the specific flow shown.
 
 ```ts
 export const VAULT_ABI = [
@@ -67,7 +69,7 @@ export const VAULT_ABI = [
   "function previewRedeem(uint256 shares) view returns (uint256)",
   "function convertToAssets(uint256 shares) view returns (uint256)",
   "function convertToShares(uint256 assets) view returns (uint256)",
-  // ERC-20 (standard signatures omitted for brevity: transfer, approve, allowance, transferFrom, decimals, name, symbol)
+  // ERC-20 (omitted — standard signatures; not part of this integration subset)
   // ERC-7575
   "function share() view returns (address)",
   "function vault(address asset_) view returns (address)",

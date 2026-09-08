@@ -16,9 +16,9 @@ The full journey of a deposit and a redemption through the epoch lifecycle. All 
               settleEpoch(N, navSnapshot) (smart account)
                             │
         ┌───────────────────────────────────────────────┐
-        │ shares minted  = depositAssets×supply/nav     │
-        │ assets reserved = redeemShares×nav/supply     │
-        └───────────────────────────────────────────────┘
+        │ shares minted   = depositAssets×(supply+1)/(nav+1)  │
+        │ assets reserved = redeemShares×(nav+1)/(supply+1)   │
+        └──────────────────────────────────────────────────────┘
                             │
         depositors claim shares              redeemers claim assets
         deposit()/mint()                     withdraw()/redeem()

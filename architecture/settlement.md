@@ -30,11 +30,19 @@ Then:
 
 ## Settling with zero supply
 
-For the first-ever settlement `S = 0` is allowed (only `N = 0` with non-zero supply is invalid): conversions collapse to the identity because `(0+1)` denominators keep the ratios well-defined — e.g. `D × (S+1)/(N+1)` with `S=0` gives `D/(N+1)`, and the offset guarantees `x=0` maps to 0 shares rather than reverting.
+For the first-ever settlement `S = 0` is allowed (only `N = 0` with non-zero supply is invalid). The `+1` virtual offsets keep the ratios well-defined: with `S = 0`, `depositShares = D × 1 / (N+1) = D/(N+1)` — **not** an identity conversion. Only the additional condition `N + 1 == D + 1` (i.e. `N == D`) would make `D/(N+1)` equal 1 share per asset. In general, depositors into a zero-supply epoch receive `floor(D/(N+1))` shares, which can be well below their `D` assets when the first NAV is large.
 
-## Zero-share deposit outcomes
+## Zero-share deposit outcomes (dust is lost, not reverted)
 
-If `depositShares` computes to 0 (deposit dust relative to NAV), the depositor's claimable share amount is 0: `deposit()` reverts `SA__ZeroAmount` on the share side, and the assets remain claimable as `claimableDepositRequest = assets` until the epoch's claims drain. Integrators should surface `previewSettlement` results before users request deposits of tiny amounts.
+If `depositShares` computes to 0 for an epoch (deposit dust relative to the NAV/supply snapshots), the minted share total is 0. In that case claiming is **consume-and-lose**: a full `deposit(assets, receiver, controller)` validates the **asset** amount, not the output share amount, then advances the claim and pays out **zero shares** — it does **not** revert. From `EpochStagedERC7540Vault.sol:525-565`, `_consumeDepositClaim` rejects `assets == 0` but accepts `shares == 0`, transfers nothing, and advances the claim when the full asset amount is consumed.
+
+Concretely, with `depositSharesMinted = 0`:
+
+- `claimableDepositRequest` returns the queued **assets** (they remain claimable as assets).
+- `deposit(assets, …)` with those assets returns `0` shares and advances the claim — the deposited assets convert to zero shares and the claim is consumed.
+- `mint(0, …)` reverts `SA__ZeroAmount` (it validates its `shares` input), but calling it does not help recover the dust.
+
+Integrators should surface `previewSettlement` results **before** users send deposits of tiny amounts relative to the epoch NAV, and warn that a floor-to-zero conversion is a total loss rather than a refund.
 
 ## Previewing
 
