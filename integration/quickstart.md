@@ -9,7 +9,7 @@ Underlying cbBTC: 0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf
 
 ## 1. Add the contract ABI fragments
 
-The full human-readable ABI is in [`reference/interfaces.md`](../reference/interfaces.md). Minimal fragments for a deposit flow:
+The supported integration ABI is in [`reference/interfaces.md`](../reference/interfaces.md). Minimal fragments for a deposit flow:
 
 ```ts
 import { createPublicClient, createWalletClient, custom, http, parseAbi, parseUnits } from "viem";
@@ -105,11 +105,12 @@ const claimableShares = BigInt(await publicClient.readContract({
   address: VAULT, abi: vaultAbi, functionName: "claimableRedeemRequest",
   args: [requestId, user],
 }));
-// claimableRedeemRequest returns SHARES; redeem(amount, ...)) takes shares.
-//(Do NOT pass shares to withdraw, whose first argument is assets.)
-// claimableShares > 0th only after the epoch settles; before settlement it is
-// zero, and redeem(0, ...) would revert SA__ZeroAmount — guard/poll first.
-// (wave watchers for the EpochSettled event or poll this view until it is non-zero.)
+// claimableRedeemRequest returns SHARES; redeem(amount, ...) takes shares.
+// Do NOT pass shares to withdraw, whose first argument is assets.
+// claimableShares is non-zero only after the epoch settles; before settlement
+// it is zero, and calling redeem(0, ...) would revert SA__ZeroAmount, so
+// guard/poll first. Watch for the EpochSettled event (or poll this view) until
+// it is non-zero.
 if (claimableShares > 0n) {
   await walletClient.writeContract({
     account: user, // connected signer (injected provider; no key in code)
@@ -126,14 +127,21 @@ Index data (epochs, prices, request history) is available from the public subgra
 ```ts
 // SUBGRAPH_URL: public endpoint documented on the Subgraph page
 const SUBGRAPH_URL = "https://api.goldsky.com/api/public/project_cmr0amyn6hg6t01yg8uf1cgrv/subgraphs/erc7540-mainnet/1.0.0/gn";
-const res = await fetch(SUBGRAPH_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    query: `{ epochPrices(first: 5, orderBy: epochId, orderDirection: desc) {
-      epochId navSnapshot totalSupplySnapshot sharePrice blockTimestamp } }`,
-  }),
-});
+
+// Fetch the latest epoch prices from the public subgraph.
+// (Wrapped in an async function so the snippet is valid both as a module and
+// as a plain script — no top-level await.)
+async function fetchLatestEpochPrices() {
+  const res = await fetch(SUBGRAPH_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query: `{ epochPrices(first: 5, orderBy: epochId, orderDirection: desc) {
+        epochId navSnapshot totalSupplySnapshot sharePrice blockTimestamp } }`,
+    }),
+  });
+  return res.json();
+}
 ```
 
 ## 5. Handle the errors

@@ -30,7 +30,7 @@ Then:
 
 ## Settling with zero supply
 
-For the first-ever settlement `S =  0` is allowed (only `N = 0` with non-zero supply is invalid). The `+1` virtual offsets keep the ratios well-defined: with `S = 0`, `depositShares = D × (0+1)/(N+1)) = D/(N+1))`, floored — this is **not** an identity conversion. Identity output (one share per asset, i.e.`depositShares == D`) occurs only when `N = 0` (the denominator collapses to1`. Exactly **one** total share (`depositShares ==  1`) occurs when `D = N+1`. In general, depositors into a zero-supply epoch receive `floor(D/(N+1))` shares, which can be well below their `D` assets when the first NAV is large.
+For the first-ever settlement `S = 0` is allowed (only `N = 0` with non-zero supply is invalid). The `+1` virtual offsets keep the ratios well-defined: with `S = 0`, the deposit formula becomes `depositShares = D × (0+1)/(N+1) = D/(N+1)`, floored — this is **not** an identity conversion. Identity output (one share per asset, i.e. `depositShares == D`) occurs only when `N = 0`, so the denominator `N+1` collapses to `1`. Exactly **one** total share (`depositShares == 1`) occurs when `D = N+1`. In general, depositors into a zero-supply epoch receive `floor(D/(N+1))` shares, which can be well below their `D` assets when the first NAV is large.
 
 ## Zero-share deposit outcomes (dust is lost, not reverted)
 

@@ -40,7 +40,7 @@ export function useRequestDeposit() {
   return (assets: bigint, user: `0x${string}`) =>
     writeContractAsync({
       address: VAULT,
-      abi: [ // fragment; full ABI in reference/interfaces.md
+      abi: [ // fragment; supported integration ABI in reference/interfaces.md
         {
           type: "function", name: "requestDeposit", stateMutability: "nonpayable",
           inputs: [
