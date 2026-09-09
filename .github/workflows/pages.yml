@@ -30,6 +30,16 @@ jobs:
       - name: Build documentation
         run: npx --yes honkit@6.2.2 build . _book
 
+      # GitBook.com renders ```mermaid fenced blocks natively on its platform, but
+      # plain HonKit only emits them as inert code blocks. Replace every Mermaid
+      # block in the generated HTML with its rendered <svg> so GitHub Pages shows
+      # the diagrams too. The Markdown ```mermaid sources are left untouched, so
+      # GitBook keeps rendering them natively.
+      - name: Inline Mermaid diagrams as SVG
+        run: |
+          npm install --no-save @mermaid-js/mermaid-cli@11.17.0
+          node scripts/inline-mermaid.mjs
+
       - name: Upload GitHub Pages artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
