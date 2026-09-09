@@ -2,27 +2,20 @@
 
 The full journey of a deposit and a redemption through the epoch lifecycle. All function names link to their reference entries.
 
-```text
-        ┌──────────────── open epoch N ────────────────┐
-        │                                              │
- depositers                     redeemers
- requestDeposit(assets)              requestRedeem(shares)
- assets → Staging                    shares → Staging
-        │                                              │
-        └────────────── closeEpoch() (smart account) ──┘
-                            │
-                  frozen epoch N; epoch N+1 opens
-                            │
-              settleEpoch(N, navSnapshot) (smart account)
-                            │
-        ┌───────────────────────────────────────────────┐
-        │ shares minted   = depositAssets×(supply+1)/(nav+1)  │
-        │ assets reserved = redeemShares×(nav+1)/(supply+1)   │
-        └──────────────────────────────────────────────────────┘
-                            │
-        depositors claim shares              redeemers claim assets
-        deposit()/mint()                     withdraw()/redeem()
-        from Staging → receiver              from Staging → receiver
+```mermaid
+flowchart TB
+    subgraph Open["Open epoch N"]
+        direction TB
+        Dep["Depositors — requestDeposit(assets)<br/>assets → Staging"]
+        Red["Redeemers — requestRedeem(shares)<br/>shares → Staging"]
+    end
+    Dep --> Close
+    Red --> Close
+    Close["closeEpoch() (smart account)"] --> Frozen["frozen epoch N; epoch N+1 opens"]
+    Frozen --> Settle["settleEpoch(N, navSnapshot) (smart account)"]
+    Settle --> Price["shares minted = depositAssets×(supply+1)/(nav+1)<br/>assets reserved = redeemShares×(nav+1)/(supply+1)"]
+    Price --> DepClaim["Depositors claim shares<br/>deposit()/mint()<br/>from Staging → receiver"]
+    Price --> RedClaim["Redeemers claim assets<br/>withdraw()/redeem()<br/>from Staging → receiver"]
 ```
 
 ## Step by step
@@ -60,8 +53,14 @@ Claims are **lazy**: only the oldest unsettled→settled epoch in a controller's
 
 ## State machine per epoch
 
-```text
- open ──closeEpoch──▶ closed/frozen ──settleEpoch──▶ settled
-   ▲                                                    │
-   └── new requests land in the freshly opened epoch    └── claims drain per controller
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> open
+    open: open — new requests land in the freshly opened epoch
+    open --> closed: closeEpoch()
+    closed: closed / frozen
+    closed --> settled: settleEpoch()
+    settled: settled — claims drain per controller
+    settled --> [*]
 ```
