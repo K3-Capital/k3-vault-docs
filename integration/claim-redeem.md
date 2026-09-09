@@ -38,7 +38,9 @@ function withdraw(uint256 assets, address receiver, address controller) external
 
 ## Converting between shares and assets
 
-The claim-time conversion factor is fixed by the epoch's settlement (`EpochSettled` event / `epochPrices` in the [subgraph](subgraph.md)): `assets = shares × nav / supply` at the snapshots. For a UI, compute the expected proceeds off-chain from those emitted snapshots rather than from live `totalAssets()/totalSupply()` — the vault's live conversion rate only reflects settled state and can change at the next settlement.
+The **per-controller** claim conversion is pro-rata from the epoch's `redeemAssetsReserved` (not directly `nav/supply`). The settlement reserves a total of `redeemAssetsReserved = floor(R × (N+1)/(S+1))`; each controller's share of that reserve is `floor(theirRedeemShares × redeemAssetsReserved / totalRedeemShares)` (`_remainingRedeemAssets`, `EpochStagedERC7540Vault.sol:690-709`). The controller that claims the epoch's **last** unclaimed redeem shares receives the entire remaining reserve — the floor-rounding residual — so per-controller proceeds are claim-order dependent at the edge.
+
+For a UI, get the authoritative numbers from the epoch's emitted `EpochSettled`/`epochPrices` snapshots via the [subgraph](subgraph.md): per-controller assets ≈ `shares × redeemAssetsReserved / totalRedeemShares`, and `maxWithdraw(controller)` gives the exact claimable asset amount for the oldest claimable epoch. Either is more accurate than `shares × nav / supply` on live `totalAssets()/totalSupply()`, which only reflects settled state and can change at the next settlement.
 
 ## Example
 

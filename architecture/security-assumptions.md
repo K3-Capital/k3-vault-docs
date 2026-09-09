@@ -31,4 +31,4 @@ The vault proxy is an `UpgradeableBeacon` proxy: the owner controls the beacon a
 
 ## Operator risks for users
 
-An approved operator can request deposits **from your wallet into the vault** and can act on your controller queue within ERC-7540 rules, but cannot transfer your shares or claim to an arbitrary receiver unless they are also authorized on the relevant path. Approve operators deliberately.
+An approved operator can request deposits **from your wallet into the vault** and, once an epoch settles, can claim **your controller's queue** to any `receiver` they choose. The claim functions (`deposit`/`mint`/`withdraw`/`redeem`) authorize `caller == controller || isOperator(controller, caller)` and then let that authorized caller name an arbitrary destination address — the operator does **not** need to be you or an additional approver to redirect a claim. Approve operators deliberately; revoke with `setOperator(operator, false)`.
