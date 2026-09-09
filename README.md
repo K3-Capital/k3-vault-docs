@@ -20,3 +20,21 @@ This site documents:
 These pages describe **verifiable on-chain facts** only: deployed contracts, their interfaces, events, and observable behavior. They do not constitute investment advice, and they do not describe the off-chain strategy, fee model, or yield sources of the vault's smart account — see [Security & trust assumptions](architecture/security-assumptions.md).
 
 For the full, canonical technical specification see [`ARCHITECTURE.md`](https://github.com/K3-Capital/k3-vault-contracts/blob/main/ARCHITECTURE.md) in the contracts repository, which remains the source of truth for protocol internals; these docs are a derived, condensed view.
+
+## Building & Mermaid diagrams
+
+The site is built with [HonKit](https://github.com/honkit/honkit) and published to **GitBook.com** (via GitBook Git Sync) and **GitHub Pages** (`.github/workflows/pages.yml`).
+
+Mermaid diagrams are written as native ```` ```mermaid ```` fenced blocks in the Markdown:
+
+- **GitBook.com** renders them natively — no extra configuration.
+- **GitHub Pages** builds with HonKit. The `honkit-plugin-mermaid-hybrid` plugin is enabled in `book.json` (`plugin.embed: true`) so HonKit inlines a static `<svg>` for each Mermaid block during `honkit build` — the generated HTML literally contains the rendered diagram, no runtime JS required. `puppeteer-config.json` supplies the `--no-sandbox` launch args needed for mermaid-cli on the GitHub Actions runner.
+
+To reproduce the Pages build locally:
+
+```sh
+npm ci
+npx honkit build . _book
+```
+
+The rendered `_book/introduction/how-it-works.html` will contain inline `<svg>` diagrams in place of the ```` ```mermaid ```` code blocks.

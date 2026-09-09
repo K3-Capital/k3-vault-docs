@@ -17,7 +17,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -27,8 +27,11 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install build toolchain (HonKit + Mermaid plugin)
+        run: npm ci
+
       - name: Build documentation
-        run: npx --yes honkit@6.2.2 build . _book
+        run: npx honkit build . _book
 
       - name: Upload GitHub Pages artifact
         if: github.event_name != 'pull_request'

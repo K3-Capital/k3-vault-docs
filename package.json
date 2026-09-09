@@ -1,0 +1,9 @@
+{
+  "name": "k3-vault-docs",
+  "private": true,
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "11.17.0",
+    "honkit": "6.2.2",
+    "honkit-plugin-mermaid-hybrid": "1.0.2"
+  }
+}
