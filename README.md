@@ -28,12 +28,13 @@ The site is built with [HonKit](https://github.com/honkit/honkit) and published 
 Mermaid diagrams are written as native ```` ```mermaid ```` fenced blocks in the Markdown:
 
 - **GitBook.com** renders them natively — no extra configuration.
-- **GitHub Pages** uses plain HonKit, which has no Mermaid renderer. The Pages workflow therefore runs `scripts/inline-mermaid.mjs` after `honkit build`; it replaces each Mermaid code block in the generated HTML with its rendered `<svg>` (via `@mermaid-js/mermaid-cli`). The Markdown sources are untouched, so GitBook output is unaffected.
+- **GitHub Pages** builds with HonKit. The `honkit-plugin-mermaid-hybrid` plugin is enabled in `book.json` (`plugin.embed: true`) so HonKit inlines a static `<svg>` for each Mermaid block during `honkit build` — the generated HTML literally contains the rendered diagram, no runtime JS required. `puppeteer-config.json` supplies the `--no-sandbox` launch args needed for mermaid-cli on the GitHub Actions runner.
 
 To reproduce the Pages build locally:
 
 ```sh
-npm install --no-save @mermaid-js/mermaid-cli@11.17.0
-npx --yes honkit@6.2.2 build . _book
-PUPPETEER_CONFIG_FILE=<path-to-puppeteer-config-with-executablePath> node scripts/inline-mermaid.mjs
+npm ci
+npx honkit build . _book
 ```
+
+The rendered `_book/introduction/how-it-works.html` will contain inline `<svg>` diagrams in place of the ```` ```mermaid ```` code blocks.

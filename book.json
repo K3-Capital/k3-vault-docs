@@ -1,0 +1,15 @@
+{
+  "plugins": [
+    "mermaid-hybrid"
+  ],
+  "pluginsConfig": {
+    "mermaid-hybrid": {
+      "plugin": {
+        "embed": true
+      },
+      "mermaid": {
+        "theme": "neutral"
+      }
+    }
+  }
+}
