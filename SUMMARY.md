@@ -8,6 +8,7 @@
 - [Architecture](architecture/system-design.md)
     - [Epoch lifecycle & settlement](architecture/settlement.md)
     - [Security & trust assumptions](architecture/security-assumptions.md)
+    - [Security reviews & audits](architecture/security-reviews.md)
     - [Invariants](architecture/invariants.md)
 - [Integration Guide](integration/quickstart.md)
     - [Requesting a deposit](integration/request-deposit.md)

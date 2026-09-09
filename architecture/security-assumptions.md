@@ -1,6 +1,6 @@
 # Security & trust assumptions
 
-Condensed from `ARCHITECTURE.md` §12. This page states **verifiable on-chain facts only**; it makes no assurances about off-chain operations.
+Condensed from `ARCHITECTURE.md` §12. This page states **verifiable on-chain facts only**; it makes no assurances about off-chain operations. For the independent security reviews covering this Solidity codebase, see [Security reviews & audits](security-reviews.md).
 
 ## On-chain permissions
 
