@@ -8,7 +8,7 @@ As a product, the K3 vault is deliberately straightforward:
 
 - **Simple.** One clear flow: you request, K3 batches and prices requests, and you claim your shares or assets.
 - **No protocol-level fees.** The vault itself does not charge fees.
-- **Clear auditability.** Every settlement publishes its value and price on-chain, and independent security reviews cover the code. You can always see where the funds are.
+- **Clear auditability.** Every settlement publishes its value and price on-chain, the vault's transfers and balances are observable on-chain, and independent security reviews cover the code. You can track on-chain where funds are held at each step of the deposit and redemption process.
 
 This site documents:
 

@@ -43,4 +43,4 @@ Every batch moves through the same three states, one at a time:
 
 At any time, at most one batch is frozen and awaiting settlement, and only one is open. This is what keeps the vault's pricing simple and auditable.
 
-Next: [Your money & getting it back](money-flow.md) to see where funds are held at each step, or the [the vault](cbbtc-vault.md) for the live deployment.
+Next: [Your money & getting it back](money-flow.md) to see where funds are held at each step, or [the vault](cbbtc-vault.md) for the live deployment.
