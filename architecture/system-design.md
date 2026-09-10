@@ -4,25 +4,16 @@ Condensed from the canonical [`ARCHITECTURE.md`](https://github.com/K3-Capital/k
 
 ## Component map
 
-```text
-                    ┌────────────────────────────┐
-                    │   SmartAccountWrapper      │  ← BeaconProxy (integrator entrypoint)
-                    │  (ERC-7540/4626/7575,      │     proxy 0x009c...53709 (cbBTC vault)
-                    │   Ownable2Step, Access-    │
-                    │   Control, Pausable,       │
-                    │   ReentrancyGuard)         │
-                    └──────┬───────────┬─────────┘
-        ERC-4626 core      │           │ settlement authority
-        (EpochStagedERC7540│           ▼
-        Vault base: epoch  │   ┌───────────────┐
-        queues, lazy claim │   │ Smart account │ EIP-7702 EOA
-        accounting,        │   │ 0x034d...0470 │ closeEpoch / settleEpoch
-        settlement math)   │   └───────────────┘
-                           ▼
-                   ┌──────────────┐
-                   │   Staging    │ custody for staged assets & shares
-                   │ 0x2163...59c7│ transferToken(token, to, amount)
-                   └──────────────┘
+```mermaid
+flowchart TB
+    Wrapper["SmartAccountWrapper<br/>(ERC-7540 / 4626 / 7575, Ownable2Step,<br/>AccessControl, Pausable, ReentrancyGuard)<br/>BeaconProxy — integrator entrypoint<br/>proxy 0x009c...53709 (cbBTC vault)"]
+    Vault["EpochStagedERC7540Vault<br/>ERC-4626 core — epoch queues,<br/>lazy claim accounting, settlement math"]
+    Account["Smart account 0x034d...0470<br/>EIP-7702 EOA — settlement authority<br/>closeEpoch / settleEpoch"]
+    Staging["Staging 0x2163...59c7<br/>custody for staged assets & shares<br/>transferToken(token, to, amount)"]
+
+    Wrapper ==>|inherits — accounting core| Vault
+    Account -->|closeEpoch / settleEpoch| Wrapper
+    Vault -->|transferToken — custody only| Staging
 ```
 
 - **`SmartAccountWrapper`** (`src/SmartAccountWrapper.sol`, 182 lines) — upgradeable entrypoint. Adds pausing (`whenNotPaused` on both request paths), `pause/unpause` (owner or `PAUSER_ROLE`), `setSmartAccount` (owner, only when no frozen epoch), `rescue(token, amount)` (owner; asset surplus → smart account, other tokens → owner), `rescueStagedToken` (owner; cannot touch the vault asset or share token), `smartAccount()` view, and the ERC-165 advertisement for ERC-7540, ERC-7575, and `IEpochSettlementPreview`.
@@ -44,9 +35,21 @@ Assets move only along this path: user → Staging (at `requestDeposit`) → vau
 
 ## Epoch state machine
 
-```text
-open(id=N) ──closeEpoch──▶ frozen(N) ──settleEpoch──▶ settled(N) ──claims drained──▶ done
-   ▲ new epoch N+1 opens at close; only one frozen epoch may exist at a time
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> Open: epoch N opens
+    note left of Open
+        new epoch N+1 opens at close; only one frozen epoch may exist at a time
+    end note
+    Open: open(N)
+    Open --> Frozen: closeEpoch
+    Frozen: frozen(N)
+    Frozen --> Settled: settleEpoch
+    Settled: settled(N)
+    Settled --> Done: claims drained
+    Done: done
+    Done --> [*]
 ```
 
 `closeEpoch` reverts if an epoch is already frozen (`SA__FrozenEpochPending`); `settleEpoch` must target exactly the frozen epoch (`SA__WrongEpoch`), which must be closed and not already settled.
