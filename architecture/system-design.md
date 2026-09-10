@@ -11,10 +11,9 @@ flowchart TB
     Account["Smart account 0x034d...0470<br/>EIP-7702 EOA — settlement authority<br/>closeEpoch / settleEpoch"]
     Staging["Staging 0x2163...59c7<br/>custody for staged assets & shares<br/>transferToken(token, to, amount)"]
 
-    Wrapper -->|ERC-4626 core| Vault
-    Wrapper -->|settlement authority| Account
-    Vault --> Staging
-    Account --> Staging
+    Wrapper ==>|inherits — accounting core| Vault
+    Account -->|closeEpoch / settleEpoch| Wrapper
+    Vault -->|transferToken — custody only| Staging
 ```
 
 - **`SmartAccountWrapper`** (`src/SmartAccountWrapper.sol`, 182 lines) — upgradeable entrypoint. Adds pausing (`whenNotPaused` on both request paths), `pause/unpause` (owner or `PAUSER_ROLE`), `setSmartAccount` (owner, only when no frozen epoch), `rescue(token, amount)` (owner; asset surplus → smart account, other tokens → owner), `rescueStagedToken` (owner; cannot touch the vault asset or share token), `smartAccount()` view, and the ERC-165 advertisement for ERC-7540, ERC-7575, and `IEpochSettlementPreview`.
