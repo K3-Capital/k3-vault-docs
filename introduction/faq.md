@@ -1,25 +1,25 @@
 # FAQ
 
 **Is a deposit or redemption instant?**
-No. This is a fully async ERC-7540 vault. Requests queue into epochs; they become claimable only after the epoch is settled by the smart account. `previewDeposit`/`previewMint`/`previewWithdraw`/`previewRedeem` revert by design.
+No. This is a fully asynchronous vault: requests queue into batches (epochs) and only become claimable after K3 settles the batch containing them. Nothing converts at the moment you request.
 
-**When do I get my shares/assets?**
-After the epoch containing your request is closed and settled. Check `claimableDepositRequest`/`claimableRedeemRequest` (and the [subgraph](../integration/subgraph.md) for history). Only the oldest settled epoch in your queue is claimable at a time.
+**When do I get my shares (on deposit) or cbBTC (on redeem)?**
+After the batch your request joined is closed and settled. You can then claim once your request becomes claimable; requests are processed oldest-batch-first. See [Your money & getting it back](money-flow.md) for the full picture.
 
 **What price will I get?**
-The price is fixed at settlement: deposit shares = `depositAssets × (supply+1) / (nav+1)` at the settlement snapshots (floor rounding, OZ virtual offset zero); redeem assets = `redeemShares × (nav+1) / (supply+1)` (floor rounding). Use the permissionless `previewSettlement(nav, supply, deposits, redeems)` to simulate. Historical prices: `epochPrices` in the subgraph.
+The price is set when your batch is settled — not when you requested and not when you claim. K3 publishes the account value (NAV snapshot) used at settlement, so the price is recorded on-chain and checkable. For the exact calculation and how to simulate it, see [Epoch lifecycle & settlement](../architecture/settlement.md).
 
-**What is `requestId`?**
-The id of the epoch the request joined — `requestId == epochId`. It is used in every pending/claimable view.
-
-**Can someone else manage my requests?**
-Yes, if you approve them with `setOperator(operator, approved)`. Operators can request deposits/claims on your behalf within the [ERC-7540 operator rules](../integration/operator-approvals.md). For redeem requests, an ERC-20 share allowance also suffices.
+**Can someone else manage my requests on my behalf?**
+Yes, if you approve them as an operator. An approved operator can request deposits or redemptions and claim on your behalf within the standard operator rules. Approve operators deliberately, and revoke them the same way. Details: [Operator approvals](../integration/operator-approvals.md).
 
 **Can the vault be paused?**
-Yes. The owner or a `PAUSER_ROLE` holder can pause, which blocks `requestDeposit` and `requestRedeem` but not claims. There is no on-chain timelock or multisig gating this on the current cbBTC deployment — see [trust assumptions](../architecture/security-assumptions.md).
+Yes. The owner (or a holder of the pause role) can pause the vault, which blocks new deposit and redemption requests but does not block claims on already-settled batches. There is no on-chain multisig or timelock gating this on the current cbBTC deployment — see [Security & trust assumptions](../architecture/security-assumptions.md).
 
-**Does the vault charge fees? How does the strategy earn yield?**
-The smart account supplies the NAV snapshot at settlement, so post-fee value accrues into the published share price. The off-chain strategy, fee model, and yield sources are **not documented here**; these docs cover on-chain behavior only.
+**Does the vault charge fees? How does it earn yield?**
+The vault itself charges no protocol-level fees. The vault's own account value at settlement determines the published share price. The off-chain strategy, fee model, and yield sources are **not documented here**; these docs cover on-chain behavior only.
+
+**Where can I verify the security of the contract code?**
+The code has been reviewed by an independent security firm; see [Security reviews & audits](../architecture/security-reviews.md). The full on-chain trust model and the deployed addresses are in [Security & trust assumptions](../architecture/security-assumptions.md).
 
 **Where is the full technical spec?**
 [`ARCHITECTURE.md`](https://github.com/K3-Capital/k3-vault-contracts/blob/main/ARCHITECTURE.md) in the contracts repository is canonical for protocol internals; this site is a condensed, derived view.

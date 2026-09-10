@@ -3,6 +3,7 @@
 - [Introduction](README.md)
     - [Overview](introduction/overview.md)
     - [How it works](introduction/how-it-works.md)
+    - [Your money & getting it back](introduction/money-flow.md)
     - [The K3 cbBTC Vault](introduction/cbbtc-vault.md)
     - [FAQ](introduction/faq.md)
 - [Architecture](architecture/system-design.md)

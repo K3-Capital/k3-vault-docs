@@ -1,18 +1,27 @@
 # Introduction
 
-K3 vaults are async deposit and redemption vehicles built on the **ERC-7540** (Tokenized Vaults with async flows) and **ERC-4626** standards. Instead of instant mint/redeem conversions, user requests are collected into **epochs** that are closed and settled off-cycle by the vault's smart account, with each settlement publishing an on-chain NAV snapshot and share price.
+K3 Capital builds simple, on-chain vaults. The **K3 cbBTC Vault** (`k3cbBTC`) is our first live vault, deployed on Ethereum mainnet. It lets you deposit and redeem **cbBTC** (Coinbase Wrapped BTC) through an asynchronous process that protects the vault's existing holders from one-off swings in price or liquidity at the moment of request.
+
+The vault is built on industry-standard smart-contract standards (ERC-7540 for asynchronous deposits and redemptions, and ERC-4626 for tokenized vaults), so it works with the broader on-chain ecosystem while keeping the mechanics simple and auditable.
+
+As a product, the K3 vault is deliberately straightforward:
+
+- **Simple.** One clear flow: you request, K3 batches and prices requests, and you claim your shares or assets.
+- **No protocol-level fees.** The vault itself does not charge fees.
+- **Clear auditability.** Every settlement publishes its value and price on-chain, and independent security reviews cover the code. You can always see where the funds are.
 
 This site documents:
 
 - The **K3 cbBTC Vault** (`k3cbBTC`) — the first live deployment, on Ethereum mainnet.
-- The underlying **epoch-staged vault infrastructure** (the `SmartAccountWrapper` / `EpochStagedERC7540Vault` contract suite).
-- The **integration surface**: contract entry points, view semantics, custom errors, and the companion subgraph for historical data.
+- The underlying **epoch-staged vault infrastructure** that powers it.
+- The **integration surface** for developers: contract entry points, view semantics, custom errors, and the companion subgraph for historical data.
 
 ## Who these docs are for
 
 | Audience | Start here |
 |---|---|
-| Business readers | [Overview](introduction/overview.md), [How it works](introduction/how-it-works.md), [The K3 cbBTC Vault](introduction/cbbtc-vault.md) |
+| Business readers (allocators, LPs, operators) | [Overview](introduction/overview.md), [How it works](introduction/how-it-works.md), [Your money & getting it back](introduction/money-flow.md), [The K3 cbBTC Vault](introduction/cbbtc-vault.md), [FAQ](introduction/faq.md) |
+| Technical readers (diligence & audit teams) | [System design](architecture/system-design.md), [Security & trust assumptions](architecture/security-assumptions.md), [Security reviews & audits](architecture/security-reviews.md) |
 | Frontend / API developers | [Quickstart](integration/quickstart.md), [Reading vault state](integration/reading-state.md), [Subgraph](integration/subgraph.md) |
 
 ## Scope & disclaimer
@@ -37,4 +46,4 @@ npm ci
 npx honkit build . _book
 ```
 
-The rendered `_book/introduction/how-it-works.html` will contain inline `<svg>` diagrams in place of the ```` ```mermaid ```` code blocks.
+The rendered `_book/architecture/system-design.html` will contain inline `<svg>` diagrams in place of the ```` ```mermaid ```` code blocks.
