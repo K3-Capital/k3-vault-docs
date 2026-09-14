@@ -20,9 +20,22 @@ read the distinction carefully.
 - **`book.toml`** — configuration for the **local open-source renderer**
   (HonKit / MdBook) used to build and preview this site from the command line.
   GitBook.com does **not** read this file. It must not be mistaken for GitBook
-  configuration. To build/preview locally without GitBook.com:
-  `npx honkit build . _book` (HonKit is the maintained open-source GitBook
-  runtime and was used to validate this content).
+  configuration.
+- **`book.json`** — HonKit plugin configuration. Mermaid source blocks are kept
+  in Markdown for GitBook and rendered as static SVG by
+  `honkit-plugin-mermaid-hybrid` for the GitHub Pages build.
+- **`puppeteer-config.json`** — Chromium launch settings used by the Mermaid
+  renderer in CI.
+
+To reproduce the Pages build locally:
+
+```sh
+npm ci
+npx honkit build . _book
+```
+
+Inspect the generated pages under `_book/` to confirm diagrams are SVG output
+rather than unprocessed Mermaid source.
 
 ## Scope notes
 

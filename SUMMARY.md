@@ -1,10 +1,12 @@
 # Summary
 
 - [Introduction](README.md)
-    - [Overview](introduction/overview.md)
-    - [How it works](introduction/how-it-works.md)
-    - [Your money & getting it back](introduction/money-flow.md)
-    - [The K3 cbBTC Vault](introduction/cbbtc-vault.md)
+    - [Why K3 Vaults](introduction/why-k3-vaults.md)
+    - [For Partners](introduction/for-partners.md)
+    - [For Investors](introduction/for-investors.md)
+    - [For Protocols](introduction/for-protocols.md)
+    - [User Journey](introduction/user-journey.md)
+    - [Example: K3 cbBTC Vault](introduction/cbbtc-vault.md)
     - [FAQ](introduction/faq.md)
 - [Architecture](architecture/system-design.md)
     - [Epoch lifecycle & settlement](architecture/settlement.md)

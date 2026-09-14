@@ -1,49 +1,33 @@
-# Introduction
+# K3 Vaults
 
-K3 Capital builds simple, on-chain vaults. The **K3 cbBTC Vault** (`k3cbBTC`) is our first live vault, deployed on Ethereum mainnet. It lets you deposit and redeem **cbBTC** (Coinbase Wrapped BTC) through an asynchronous process that protects the vault's existing holders from one-off swings in price or liquidity at the moment of request.
+K3 Capital has been deploying liquidity on-chain since 2021. The team originated as the internal decentralized-finance department of a large retail crypto lending platform and became a standalone company in 2024. That lineage shapes how K3 works today: institutional credit and risk discipline combined with hands-on execution in on-chain markets.
 
-The vault is built on industry-standard smart-contract standards (ERC-7540 for asynchronous deposits and redemptions, and ERC-4626 for tokenized vaults), so it works with the broader on-chain ecosystem while keeping the mechanics simple and auditable.
+K3 is internalizing vault infrastructure so distribution partners can offer access to actively managed strategies through a consistent customer journey. The infrastructure collects deposit and withdrawal requests, records ownership, and applies a common valuation point to each settlement cycle. K3 manages the underlying portfolio under a vault-specific mandate and provides continuous automated monitoring with on-call response.
 
-As a product, the K3 vault is deliberately straightforward:
+## The proposition
 
-- **Simple.** One clear flow: you request, K3 batches and prices requests, and you claim your shares or assets.
-- **No protocol-level fees.** The vault itself does not charge fees.
-- **Clear auditability.** Every settlement publishes its value and price on-chain, the vault's transfers and balances are observable on-chain, and independent security reviews cover the code. You can track on-chain where funds are held at each step of the deposit and redemption process.
+- **For distribution partners:** one reusable route across deposits, portfolio reporting, and withdrawals.
+- **For their eligible customers:** access to an actively managed, vault-specific mandate with requests in the same settlement cycle priced from one Net Asset Value (NAV) and supply snapshot.
+- **For protocols and strategy venues:** a potential distribution channel for capital managed under defined operating policies.
 
-This site documents:
+The long-term direction is a one-stop strategy and infrastructure layer across additional eligible assets and EVM networks. That is a roadmap, not a claim that every K3 strategy already uses this technology or that every asset and network is supported.
 
-- The **K3 cbBTC Vault** (`k3cbBTC`) — the first live deployment, on Ethereum mainnet.
-- The underlying **epoch-staged vault infrastructure** that powers it.
-- The **integration surface** for developers: contract entry points, view semantics, custom errors, and the companion subgraph for historical data.
+## Live today
 
-## Who these docs are for
+The **K3 cbBTC Vault** (`k3cbBTC`) is the first live deployment of K3's proprietary vault infrastructure. It runs on Ethereum and accepts cbBTC. K3 also manages live products and allocations delivered through partner infrastructure and external strategy venues; those should not be confused with the proprietary vault deployment.
+
+## Where to start
 
 | Audience | Start here |
 |---|---|
-| Business readers (allocators, LPs, operators) | [Overview](introduction/overview.md), [How it works](introduction/how-it-works.md), [Your money & getting it back](introduction/money-flow.md), [The K3 cbBTC Vault](introduction/cbbtc-vault.md), [FAQ](introduction/faq.md) |
-| Technical readers (diligence & audit teams) | [System design](architecture/system-design.md), [Security & trust assumptions](architecture/security-assumptions.md), [Security reviews & audits](architecture/security-reviews.md) |
-| Frontend / API developers | [Quickstart](integration/quickstart.md), [Reading vault state](integration/reading-state.md), [Subgraph](integration/subgraph.md) |
+| Distribution and product partners | [Why K3 Vaults](introduction/why-k3-vaults.md), [For Partners](introduction/for-partners.md), [User Journey](introduction/user-journey.md) |
+| Eligible customers and allocators | [For Investors](introduction/for-investors.md), [User Journey](introduction/user-journey.md), [Example: K3 cbBTC Vault](introduction/cbbtc-vault.md), [FAQ](introduction/faq.md) |
+| Protocols and strategy venues | [For Protocols](introduction/for-protocols.md), [Why K3 Vaults](introduction/why-k3-vaults.md) |
+| Technical diligence teams | [System design](architecture/system-design.md), [Security & trust assumptions](architecture/security-assumptions.md), [Security reviews & audits](architecture/security-reviews.md) |
+| Developers | [Integration Guide](integration/quickstart.md), [Reading vault state](integration/reading-state.md), [Reference](reference/addresses.md) |
 
-## Scope & disclaimer
+## Important boundaries
 
-These pages describe **verifiable on-chain facts** only: deployed contracts, their interfaces, events, and observable behavior. They do not constitute investment advice, and they do not describe the off-chain strategy, fee model, or yield sources of the vault's smart account — see [Security & trust assumptions](architecture/security-assumptions.md).
+Each vault has its own mandate, eligibility rules, supported assets, fees, operating policy, and governing terms. Settlement and NAV reporting are targeted for **Tuesdays and Fridays**, but timing is not guaranteed. NAV is operator-computed and published on-chain; it is not independently verified by an on-chain price feed.
 
-For the full, canonical technical specification see [`ARCHITECTURE.md`](https://github.com/K3-Capital/k3-vault-contracts/blob/main/ARCHITECTURE.md) in the contracts repository, which remains the source of truth for protocol internals; these docs are a derived, condensed view.
-
-## Building & Mermaid diagrams
-
-The site is built with [HonKit](https://github.com/honkit/honkit) and published to **GitBook.com** (via GitBook Git Sync) and **GitHub Pages** (`.github/workflows/pages.yml`).
-
-Mermaid diagrams are written as native ```` ```mermaid ```` fenced blocks in the Markdown:
-
-- **GitBook.com** renders them natively — no extra configuration.
-- **GitHub Pages** builds with HonKit. The `honkit-plugin-mermaid-hybrid` plugin is enabled in `book.json` (`plugin.embed: true`) so HonKit inlines a static `<svg>` for each Mermaid block during `honkit build` — the generated HTML literally contains the rendered diagram, no runtime JS required. `puppeteer-config.json` supplies the `--no-sandbox` launch args needed for mermaid-cli on the GitHub Actions runner.
-
-To reproduce the Pages build locally:
-
-```sh
-npm ci
-npx honkit build . _book
-```
-
-The rendered `_book/architecture/system-design.html` will contain inline `<svg>` diagrams in place of the ```` ```mermaid ```` code blocks.
+These docs describe product infrastructure and technical behavior. They do not constitute investment advice or an offer. The canonical protocol specification remains [`ARCHITECTURE.md`](https://github.com/K3-Capital/k3-vault-contracts/blob/main/ARCHITECTURE.md) in the contracts repository.
