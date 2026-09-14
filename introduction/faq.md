@@ -1,25 +1,37 @@
 # FAQ
 
-**Is a deposit or redemption instant?**
-No. This is a fully asynchronous vault: requests queue into batches (epochs) and only become claimable after K3 settles the batch containing them. Nothing converts at the moment you request.
+**Is K3 Vault a standalone product today?**
+K3's proprietary vault infrastructure is live through the K3 cbBTC Vault on Ethereum. The broader one-stop strategy and infrastructure proposition is the long-term direction. Other live K3 products may use partner infrastructure and should not be treated as deployments of the proprietary vault stack.
 
-**When do I get my shares (on deposit) or cbBTC (on redeem)?**
-After the batch your request joined is closed and settled. You can then claim once your request becomes claimable; requests are processed oldest-batch-first. See [Your money & getting it back](money-flow.md) for the full picture.
+**Who are these vaults for?**
+They are designed primarily for distribution partners and their eligible customers. Eligibility, availability, disclosures, and governing terms depend on the specific vault and jurisdiction. This documentation is not an offer or investment advice.
 
-**What price will I get?**
-The price is set when your batch is settled — not when you requested and not when you claim. K3 publishes the account value (NAV snapshot) used at settlement, so the price is recorded on-chain and checkable. For the exact calculation and how to simulate it, see [Epoch lifecycle & settlement](../architecture/settlement.md).
+**Can a vault support any asset or network?**
+No universal compatibility is claimed. The current proprietary deployment accepts cbBTC on Ethereum. The infrastructure is designed to extend to additional eligible assets and EVM networks, subject to technical, product, and risk review. Fee-on-transfer and rebasing assets are not assumed to work.
 
-**Can someone else manage my requests on my behalf?**
-Yes, if you approve them as an operator. An approved operator can request deposits or redemptions and claim on your behalf within the standard operator rules. Approve operators deliberately, and revoke them the same way. Details: [Operator approvals](../integration/operator-approvals.md).
+**Who defines the strategy mandate?**
+Each mandate is vault-specific and designed around customer and partner needs. Its governing materials define permitted assets, partner constraints, monitored limits, and the scope of K3's discretion. These policy limits are not enforced by the vault contract unless a vault's specific documentation says otherwise.
 
-**Can the vault be paused?**
-Yes. The owner (or a holder of the pause role) can pause the vault, which blocks new deposit and redemption requests but does not block claims on already-settled batches. There is no on-chain multisig or timelock gating this on the current cbBTC deployment — see [Security & trust assumptions](../architecture/security-assumptions.md).
+**How is the portfolio monitored?**
+K3 provides continuous automated monitoring with on-call response. This is an operating policy, not an on-chain guarantee or response-time commitment.
 
-**Does the vault charge fees? How does it earn yield?**
-The vault itself charges no protocol-level fees. The vault's own account value at settlement determines the published share price. The off-chain strategy, fee model, and yield sources are **not documented here**; these docs cover on-chain behavior only.
+**When are deposits and withdrawals processed?**
+Settlement and NAV reporting are targeted for Tuesdays and Fridays. This is an operational target, not a lockup, service-level agreement, on-chain schedule, or timing guarantee. Requests become claimable only after their cycle is closed, valued, settled, and fully funded.
 
-**Where can I verify the security of the contract code?**
-The code has been reviewed by an independent security firm; see [Security reviews & audits](../architecture/security-reviews.md). The full on-chain trust model and the deployed addresses are in [Security & trust assumptions](../architecture/security-assumptions.md).
+**What price applies to my request?**
+All deposits and withdrawals settled in the same cycle use one NAV and supply snapshot. The price is set at settlement, not when the request or claim is made.
 
-**Where is the full technical spec?**
-[`ARCHITECTURE.md`](https://github.com/K3-Capital/k3-vault-contracts/blob/main/ARCHITECTURE.md) in the contracts repository is canonical for protocol internals; this site is a condensed, derived view.
+**Who determines NAV?**
+K3 operations computes the post-fee NAV and publishes it on-chain for settlement. The published record is observable, but the NAV is not independently checked by an on-chain price feed. An incorrect NAV can misprice the cycle.
+
+**Does the vault charge fees?**
+Default commercial settings are 0% management fee and 5% performance fee; vault-specific terms prevail. The contract adds no separate protocol-level fee. This does not mean a vault has no fees, costs, or product-specific performance-fee mechanics.
+
+**What happens when the vault is paused?**
+Pausing blocks new deposit and withdrawal requests. It does not block settlement or claims. The current cbBTC deployment's privileged roles and controls are documented in [Security & trust assumptions](../architecture/security-assumptions.md).
+
+**Can someone act for me?**
+An approved operator can submit requests and claims on a controller's behalf within the contract's operator rules. Approvals should be granted and revoked deliberately. See [Operator approvals](../integration/operator-approvals.md).
+
+**Where can I verify the implementation?**
+See [Example: K3 cbBTC Vault](cbbtc-vault.md), [Security reviews & audits](../architecture/security-reviews.md), [Security & trust assumptions](../architecture/security-assumptions.md), and the [Deployment registry](../reference/deployment-registry.md). The canonical protocol specification is [`ARCHITECTURE.md`](https://github.com/K3-Capital/k3-vault-contracts/blob/main/ARCHITECTURE.md).
