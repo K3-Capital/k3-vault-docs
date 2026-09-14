@@ -1,6 +1,9 @@
 {
   "name": "k3-vault-docs",
   "private": true,
+  "scripts": {
+    "build": "honkit build . _book && node scripts/set-page-titles.mjs _book"
+  },
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "11.17.0",
     "honkit": "6.2.2",

@@ -31,8 +31,11 @@ To reproduce the Pages build locally:
 
 ```sh
 npm ci
-npx honkit build . _book
+npm run build
 ```
+
+The build rewrites HonKit's default browser titles to
+`K3 Vaults - <page title>` before publishing.
 
 Inspect the generated pages under `_book/` to confirm diagrams are SVG output
 rather than unprocessed Mermaid source.
