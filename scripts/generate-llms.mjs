@@ -141,6 +141,28 @@ function assertNoUnresolvedInternalMdLinks(full) {
   return leftover.length;
 }
 
+/**
+ * Deterministic navigation coverage: the generated artifacts must stay reachable from
+ * the published table of contents. `SUMMARY.md` carries one absolute link per artifact
+ * (HonKit renders absolute links as sidebar entries from every page depth, while a bare
+ * non-page relative target is silently dropped), so removing either link hides the
+ * LLM-facing files from the docs navigation. Fail the build instead.
+ */
+function assertLlmsArtifactsLinked(summary) {
+  const artifacts = ["llms.txt", "llms-full.txt"];
+  const missing = artifacts.filter((file) => !summary.includes(`(${baseUrl}${file})`));
+
+  if (missing.length > 0) {
+    throw new Error(
+      `SUMMARY.md does not link the generated ${missing.join(
+        ", ",
+      )} artifact(s); add "- [<file>](${baseUrl}<file>)" so they stay in the site navigation.`,
+    );
+  }
+
+  return artifacts.length;
+}
+
 const summary = await readFile(summaryPath, "utf8");
 const pages = parseSummary(summary);
 
@@ -172,6 +194,7 @@ if (!validation.valid) {
   throw new Error(`llms.txt failed validation: ${JSON.stringify(validation)}`);
 }
 assertNoUnresolvedInternalMdLinks(full);
+assertLlmsArtifactsLinked(summary);
 
 const llmsTxtPath = join(outputDirectory, "llms.txt");
 const llmsFullPath = join(outputDirectory, "llms-full.txt");
@@ -182,3 +205,6 @@ console.log(
   `Generated ${llmsPages.length} page entries: ${llmsTxtPath} and ${llmsFullPath}.`,
 );
 console.log(`Internal .md links rewritten to absolute .html URLs; 0 unresolved remain.`);
+console.log(
+  `SUMMARY.md links both generated artifacts (llms.txt, llms-full.txt); sidebar coverage verified.`,
+);

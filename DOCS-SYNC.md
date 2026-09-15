@@ -39,6 +39,14 @@ read the distinction carefully.
   deterministic build-time gate asserts that `llms.txt` validates and that
   `llms-full.txt` contains **zero** unresolved internal `.md` links — the build
   fails otherwise.
+  - **Navigation:** both artifacts are linked from `SUMMARY.md` as their absolute
+    published URLs
+    (`https://k3-capital.github.io/k3-vault-docs/llms.txt` and
+    `https://k3-capital.github.io/k3-vault-docs/llms-full.txt`) so they appear in
+    the site's left navigation. Absolute URLs are required: HonKit renders an
+    absolute link as a sidebar entry from every page depth, while a bare non-page
+    relative target (e.g. `llms.txt`) is silently dropped from the navigation.
+    The build gate also asserts those two links stay in `SUMMARY.md`.
 
 To reproduce the Pages build locally:
 
