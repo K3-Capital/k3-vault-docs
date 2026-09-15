@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import { llmsFromPages } from "@lacspace/llms-txt";
+import { join, posix } from "node:path";
+import { llmsFromPages, validateLlmsTxt } from "@lacspace/llms-txt";
 
 const outputDirectory = process.argv[2] ?? "_book";
 const baseUrl = "https://k3-capital.github.io/k3-vault-docs/";
@@ -12,7 +12,7 @@ function parseSummary(summary) {
   let currentSection = null;
 
   for (const line of summary.split("\n")) {
-    const match = line.match(/^(\s*)-\s+\[([^\]]+)\]\(([^)]+\.md)\)\s*$/);
+    const match = line.match(/^(\s*)-?\s+\[([^\]]+)\]\(([^)]+\.md)\)\s*$/);
     if (!match) continue;
 
     const [, indent, title, source] = match;
@@ -35,12 +35,119 @@ function pageUrl(source) {
   return `${baseUrl}${source.replace(/\.md$/, ".html")}`;
 }
 
+/** Canonicalize the full markdown path referenced by a relative link from `source`. */
+function linkSourcePath(rawLinkPath, source) {
+  const sourceDir = posix.dirname(source);
+  if (posix.isAbsolute(rawLinkPath)) return posix.normalize(rawLinkPath).replace(/^\//, "");
+  return posix.normalize(posix.join(sourceDir, rawLinkPath));
+}
+
+/**
+ * Resolve one link target to an absolute published URL.
+ *
+ * Internal relative `.md` links (e.g. `for-investors.md`, `../integration/quickstart.md`)
+ * are resolved against the source page's directory, mapped to their published `.html`
+ * page, and made absolute so they survive the pages being combined at the site root in
+ * `llms-full.txt`. Fragments, external links, root-absolute non-doc paths, and anything
+ * that is not a doc page are left untouched.
+ *
+ * Returns the rewritten target, or `null` when the target needs no change.
+ */
+function resolveLinkTarget(target, source) {
+  let path = target;
+  let fragment = "";
+
+  const hashIndex = target.search(/#/);
+  if (hashIndex !== -1) {
+    path = target.slice(0, hashIndex);
+    fragment = target.slice(hashIndex);
+  }
+
+  // External schemes, pure anchors, and empty targets: never rewrite.
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(path)) return null;
+  if (path === "" || path.startsWith("#")) return null;
+
+  // Only rewrite targets that point at a markdown doc page.
+  if (!path.endsWith(".md")) return null;
+
+  const canonical = linkSourcePath(path, source);
+  if (canonical === "." || canonical === ".." || canonical.includes("..")) return null;
+
+  const resolved = pageUrl(canonical);
+  return `${resolved}${fragment}`;
+}
+
+const inlineLinkPattern = /\[([^\]\n]*)\]\(([^()\n]+)\)/g;
+
+/** Track code-fence state while rewriting inline links, so fences never get touched. */
+function rewriteInternalLinks(content, source) {
+  const isFence = /^\s*(```|~~~)/;
+  const lines = content.split("\n");
+  let inFence = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    if (isFence.test(lines[i])) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+
+    lines[i] = lines[i].replace(inlineLinkPattern, (match, text, rawTarget) => {
+      // Preserve an optional quoted `"title"` suffix.
+      const titleMatch = rawTarget.match(/^(\S+)(\s+".+")?$/);
+      const target = titleMatch ? titleMatch[1] : rawTarget;
+      const title = titleMatch && titleMatch[2] ? titleMatch[2] : "";
+
+      const rewritten = resolveLinkTarget(target, source);
+      if (rewritten === null) return match;
+      return `[${text}](${rewritten}${title})`;
+    });
+  }
+
+  return lines.join("\n");
+}
+
+/**
+ * Deterministic generated-output gate: after rewriting, `llms-full.txt` must contain
+ * NO unresolved internal `.md` links. An internal link is one that still has a relative
+ * or root-relative markdown target (no scheme) — the exact 404 class the rewrite exists
+ * to eliminate. Any such leftover fails the build.
+ */
+function assertNoUnresolvedInternalMdLinks(full) {
+  const leftover = [];
+  const linkPattern = /\[([^\]\n]*)\]\(([^()\n]+)\)/g;
+  let match;
+  while ((match = linkPattern.exec(full)) !== null) {
+    const rawPath = match[2].replace(/\s+".*"?$/, "");
+    // Strip any trailing fragment so ".md#fragment" targets are caught too.
+    const path = rawPath.split("#")[0];
+    if (path.startsWith("#")) continue;
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(path)) continue; // external link: fine
+    if (path.endsWith(".md")) {
+      leftover.push({ text: match[1], target: match[2] });
+    }
+  }
+
+  if (leftover.length > 0) {
+    const samples = leftover
+      .slice(0, 10)
+      .map((l) => `  [${l.text}](${l.target})`)
+      .join("\n");
+    throw new Error(
+      `llms-full.txt still contains ${leftover.length} unresolved internal .md link(s):\n${samples}`,
+    );
+  }
+
+  return leftover.length;
+}
+
 const summary = await readFile(summaryPath, "utf8");
 const pages = parseSummary(summary);
 
 const llmsPages = [];
 for (const page of pages) {
-  const content = await readFile(page.source, "utf8");
+  const raw = await readFile(page.source, "utf8");
+  const content = rewriteInternalLinks(raw, page.source);
   llmsPages.push({
     title: page.title,
     url: pageUrl(page.source),
@@ -58,9 +165,20 @@ const { txt, full } = llmsFromPages(llmsPages, {
   defaultSection: "Docs",
 });
 
+// Deterministic generated-output coverage: the compact index must validate, and the
+// full artifact must contain zero unresolved internal .md links.
+const validation = validateLlmsTxt(txt);
+if (!validation.valid) {
+  throw new Error(`llms.txt failed validation: ${JSON.stringify(validation)}`);
+}
+assertNoUnresolvedInternalMdLinks(full);
+
 const llmsTxtPath = join(outputDirectory, "llms.txt");
 const llmsFullPath = join(outputDirectory, "llms-full.txt");
 await writeFile(llmsTxtPath, txt);
 await writeFile(llmsFullPath, full);
 
-console.log(`Generated ${llmsPages.length} page entries: ${llmsTxtPath} and ${llmsFullPath}.`);
+console.log(
+  `Generated ${llmsPages.length} page entries: ${llmsTxtPath} and ${llmsFullPath}.`,
+);
+console.log(`Internal .md links rewritten to absolute .html URLs; 0 unresolved remain.`);

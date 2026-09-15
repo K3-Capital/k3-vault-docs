@@ -32,7 +32,13 @@ read the distinction carefully.
   uses the maintained, zero-dependency
   [`@lacspace/llms-txt`](https://www.npmjs.com/package/@lacspace/llms-txt)
   library and derives the page list from `SUMMARY.md`, so the LLM-facing index
-  always mirrors the published table of contents.
+  always mirrors the published table of contents. Because `llms-full.txt`
+  combines every page at the site root, the script rewrites each page's internal
+  relative `.md` links to absolute published `.html` URLs (resolved against the
+  source page's directory), while preserving fragments and external links. A
+  deterministic build-time gate asserts that `llms.txt` validates and that
+  `llms-full.txt` contains **zero** unresolved internal `.md` links — the build
+  fails otherwise.
 
 To reproduce the Pages build locally:
 
