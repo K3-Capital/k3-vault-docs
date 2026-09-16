@@ -1,33 +1,27 @@
-# K3 Vaults
+# Introduction
 
-K3 Capital has been deploying liquidity on-chain since 2021. The team originated as the internal decentralized-finance department of a large retail crypto lending platform and became a standalone company in 2024. That lineage shapes how K3 works today: institutional credit and risk discipline combined with hands-on execution in on-chain markets.
+Decentralized finance has become very effective at producing yield opportunities and considerably less effective at making them accessible, comparable, and safe to hold for anyone who is not a full-time specialist. K3 Vaults exist to close that gap. Each vault packages an actively managed on-chain strategy into a single tokenized product, delivered through infrastructure that K3 Capital builds, operates, and is accountable for end to end.
 
-K3 is internalizing vault infrastructure so distribution partners can offer access to actively managed strategies through a consistent customer journey. The infrastructure collects deposit and withdrawal requests, records ownership, and applies a common valuation point to each settlement cycle. K3 manages the underlying portfolio under a vault-specific mandate and provides continuous automated monitoring with on-call response.
+K3 Capital has deployed liquidity across various DeFi protocols since 2021. The team originated as the internal decentralized-finance department of a large retail crypto lending platform and became a standalone company in 2024. That lineage combines institutional credit and risk discipline with hands-on execution in on-chain markets.
 
-## The proposition
+Today K3 acts as strategist and day-to-day manager for live products delivered through several partners' vault infrastructure and, since August 2026, through its own proprietary vault stack. The two should not be confused: products running on partner infrastructure demonstrate K3's strategy-management capability but are not deployments of the K3 Vault contracts described here.
 
-- **For distribution partners:** one reusable route across deposits, portfolio reporting, and withdrawals.
-- **For their eligible customers:** access to an actively managed, vault-specific mandate with requests in the same settlement cycle priced from one Net Asset Value (NAV) and supply snapshot.
-- **For protocols and strategy venues:** a potential distribution channel for capital managed under defined operating policies.
+## Yield is abundant, access is not
 
-The long-term direction is a one-stop strategy and infrastructure layer across additional eligible assets and EVM networks. That is a roadmap, not a claim that every K3 strategy already uses this technology or that every asset and network is supported.
+### A fragmented opportunity set
 
-## Live today
+The same unit of capital—a dollar or a bitcoin—can earn materially different returns depending on where it sits: which chain it is on, which lending market it is supplied to, which stablecoin design backs it, and whether it is placed in a fixed-rate market, a variable-rate pool, or a time-limited incentive program. There is no single venue at which these options can be compared on a like-for-like basis, and the best available rate for a given level of risk changes from week to week.
 
-The **K3 cbBTC Vault** (`k3cbBTC`) is the first live deployment of K3's proprietary vault infrastructure. It runs on Ethereum and accepts cbBTC. K3 also manages live products and allocations delivered through partner infrastructure and external strategy venues; those should not be confused with the proprietary vault deployment.
+### Heterogeneous and evolving risk
 
-## Where to start
+Every opportunity carries its own risk profile, user experience, and learning curve. Evaluating a lending market means understanding its oracle, collateral set, liquidation logic, governance, and smart contracts. Evaluating a stablecoin means understanding its issuer, reserves, redemption path, and peg mechanics. Multiplied across the protocols, chains, and token designs launched in any given quarter, the diligence burden exceeds the capacity of almost every individual and most product teams inside exchanges, wallets, and fintechs.
 
-| Audience | Start here |
-|---|---|
-| Distribution and product partners | [Why K3 Vaults](introduction/why-k3-vaults.md), [For Partners](introduction/for-partners.md), [User Journey](introduction/user-journey.md) |
-| Eligible customers and allocators | [For Investors](introduction/for-investors.md), [User Journey](introduction/user-journey.md), [Example: K3 cbBTC Vault](introduction/cbbtc-vault.md), [FAQ](introduction/faq.md) |
-| Protocols and strategy venues | [For Protocols](introduction/for-protocols.md), [Why K3 Vaults](introduction/why-k3-vaults.md) |
-| Technical diligence teams | [System design](architecture/system-design.md), [Security & trust assumptions](architecture/security-assumptions.md), [Security reviews & audits](architecture/security-reviews.md) |
-| Developers | [Integration Guide](integration/quickstart.md), [Reading vault state](integration/reading-state.md), [Reference](reference/addresses.md) |
+### The operational cost of capturing yield
 
-## Important boundaries
+Realizing the return on offer is a continuous operational task rather than a one-off allocation decision. New chains launch, new issuers appear, incentive programs start and stop, and rates converge. Capturing yield therefore requires constant monitoring, frequent rebalancing, transaction costs, and the judgment to know when to exit. The time and attention consumed is a real cost, and it never appears in a quoted APY.
 
-Each vault has its own mandate, eligibility rules, supported assets, fees, operating policy, and governing terms. Settlement and NAV reporting are targeted for **Tuesdays and Fridays**, but timing is not guaranteed. NAV is operator-computed and published on-chain; it is not independently verified by an on-chain price feed.
+### The platform perspective
 
-These docs describe product infrastructure and technical behavior. They do not constitute investment advice or an offer. The canonical protocol specification remains [`ARCHITECTURE.md`](https://github.com/K3-Capital/k3-vault-contracts/blob/main/ARCHITECTURE.md) in the contracts repository.
+Distribution platforms encounter the same problem from the other side. An exchange, wallet, neobank, or token issuer wants to offer its customers a sensible return on assets they already hold. It does not want to build and staff a DeFi trading desk, and it cannot expose customers to a maze of protocols, interfaces, and disclosures. What it requires is a single, well-defined product with one integration surface and one accountable counterparty.
+
+Continue to [Vaults: managed products for on-chain markets](introduction/why-k3-vaults.md).
