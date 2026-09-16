@@ -1,12 +1,8 @@
 # Summary
 
 - [Introduction](README.md)
-    - [Why K3 Vaults](introduction/why-k3-vaults.md)
-    - [For Partners](introduction/for-partners.md)
-    - [For Investors](introduction/for-investors.md)
-    - [For Protocols](introduction/for-protocols.md)
-    - [User Journey](introduction/user-journey.md)
-    - [Example: K3 cbBTC Vault](introduction/cbbtc-vault.md)
+    - [Vaults: managed products for on-chain markets](introduction/why-k3-vaults.md)
+    - [Product Overview](introduction/cbbtc-vault.md)
     - [FAQ](introduction/faq.md)
 - [Architecture](architecture/system-design.md)
     - [Epoch lifecycle & settlement](architecture/settlement.md)
