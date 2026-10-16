@@ -22,5 +22,6 @@
     - [Interfaces](reference/interfaces.md)
     - [Events](reference/events.md)
     - [Deployment registry](reference/deployment-registry.md)
+- [GitHub Repository](https://github.com/K3-Capital/k3-vault-contracts)
 - [llms.txt](https://k3-capital.github.io/k3-vault-docs/llms.txt)
 - [llms-full.txt](https://k3-capital.github.io/k3-vault-docs/llms-full.txt)
