@@ -1,4 +1,4 @@
-# Vaults: managed products for on-chain markets
+# Vaults
 
 ## What a vault is
 

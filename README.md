@@ -24,4 +24,4 @@ Realizing the return on offer is a continuous operational task rather than a one
 
 Distribution platforms encounter the same problem from the other side. An exchange, wallet, neobank, or token issuer wants to offer its customers a sensible return on assets they already hold. It does not want to build and staff a DeFi trading desk, and it cannot expose customers to a maze of protocols, interfaces, and disclosures. What it requires is a single, well-defined product with one integration surface and one accountable counterparty.
 
-Continue to [Vaults: managed products for on-chain markets](introduction/why-k3-vaults.md).
+Continue to [Vaults](introduction/why-k3-vaults.md).
