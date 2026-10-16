@@ -10,11 +10,11 @@ vulnerabilities. These pages report verifiable review facts (scope, findings,
 and resolution) only, and do not make safety or assurance claims beyond what the
 review records.
 
-## K3 Security Review — Pashov Audit Group (2026-08)
+## <span style="white-space:nowrap"><img src="../assets/k3-mark.svg" alt="K3" width="30" height="30" style="vertical-align:-6px;margin:0 10px 0 0;border-radius:3px;filter:var(--k3-logo-filter)">K3</span> Security Review — <span style="white-space:nowrap"><img src="../assets/pashov-audit-group.png" alt="Pashov Audit Group logo" width="32" height="32" style="vertical-align:-8px;margin:0 10px 0 4px;border-radius:50%;box-shadow:0 0 0 1px var(--k3-line)">Pashov</span> Audit Group <span style="white-space:nowrap">(2026-08)</span>
 
 | | |
 |---|---|
-| **Auditor** | <img src="../assets/pashov-audit-group.png" alt="Pashov Audit Group logo" width="36" height="36" style="vertical-align:middle;margin:0 10px 0 0;border-radius:50%;box-shadow:0 0 0 1px var(--k3-line)"> Pashov Audit Group (BengalCatBalu, InfiniteSec, K42, merlinboii, shaka) |
+| **Auditor** | Pashov Audit Group (BengalCatBalu, InfiniteSec, K42, merlinboii, shaka) |
 | **Review window** | August 19 – 23, 2026 (3 focused audit days + 1 fixes-review day) |
 | **Scope** | [`erc7540-wrapper`](https://github.com/K3-Capital/erc7540-wrapper) `src/` at commit [`f8a4e84a6ad19d08067bcc4825896cfb630d0d68`](https://github.com/K3-Capital/erc7540-wrapper/tree/f8a4e84a6ad19d08067bcc4825896cfb630d0d68/src) |
 | **Findings** | 1 total — 1 Low severity (L-01, resolved) |
