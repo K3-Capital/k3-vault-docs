@@ -1,5 +1,7 @@
 # Vaults
 
+Managed products for on-chain markets.
+
 ## What a vault is
 
 The market's response to fragmented opportunities and operational hurdles has been the growth of managed products under the "vault" label: smart contracts that pool deposits in a single asset and delegate allocation to a manager. The depositor holds one token representing a pro-rata claim on the pool; the manager selects venues, sizes positions, and rebalances. Returns accrue to the value of that token rather than being collected venue by venue.
