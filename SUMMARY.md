@@ -1,7 +1,7 @@
 # Summary
 
 - [Introduction](README.md)
-    - [Vaults: managed products for on-chain markets](introduction/why-k3-vaults.md)
+    - [Vaults](introduction/why-k3-vaults.md)
     - [Product Overview](introduction/cbbtc-vault.md)
     - [FAQ](introduction/faq.md)
 - [Architecture](architecture/system-design.md)
