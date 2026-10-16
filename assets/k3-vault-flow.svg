@@ -114,10 +114,10 @@ text{font-family:"InterEmbedded",Inter,system-ui,-apple-system,"Segoe UI",Roboto
 <text x="40" y="125.0" font-size="14" font-weight="700" fill="#0f0f13" text-anchor="middle">1</text>
 <circle cx="40" cy="260.0" r="14" fill="#ffffff"/>
 <text x="40" y="265.0" font-size="14" font-weight="700" fill="#0f0f13" text-anchor="middle">2</text>
-<circle cx="40" cy="394.0" r="15" fill="#ffffff"/>
-<text x="40" y="399.0" font-size="14" font-weight="700" fill="#0f0f13" text-anchor="middle">3a</text>
-<circle cx="40" cy="523.0" r="15" fill="#ffffff"/>
-<text x="40" y="528.0" font-size="14" font-weight="700" fill="#0f0f13" text-anchor="middle">3b</text>
-<circle cx="40" cy="642.0" r="15" fill="#ffffff"/>
-<text x="40" y="647.0" font-size="14" font-weight="700" fill="#0f0f13" text-anchor="middle">3c</text>
+<circle cx="40" cy="394.0" r="14" fill="#ffffff"/>
+<text x="40" y="399.0" font-size="14" font-weight="700" fill="#0f0f13" text-anchor="middle">3</text>
+<circle cx="40" cy="523.0" r="14" fill="#ffffff"/>
+<text x="40" y="528.0" font-size="14" font-weight="700" fill="#0f0f13" text-anchor="middle">4</text>
+<circle cx="40" cy="642.0" r="14" fill="#ffffff"/>
+<text x="40" y="647.0" font-size="14" font-weight="700" fill="#0f0f13" text-anchor="middle">5</text>
 </svg>
