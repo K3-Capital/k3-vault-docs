@@ -14,7 +14,7 @@ review records.
 
 | | |
 |---|---|
-| **Auditor** | Pashov Audit Group (BengalCatBalu, InfiniteSec, K42, merlinboii, shaka) |
+| **Auditor** | <img src="../assets/pashov-audit-group.png" alt="Pashov Audit Group logo" width="36" height="36" style="vertical-align:middle;margin:0 10px 0 0;border-radius:50%;box-shadow:0 0 0 1px var(--k3-line)"> Pashov Audit Group (BengalCatBalu, InfiniteSec, K42, merlinboii, shaka) |
 | **Review window** | August 19 – 23, 2026 (3 focused audit days + 1 fixes-review day) |
 | **Scope** | [`erc7540-wrapper`](https://github.com/K3-Capital/erc7540-wrapper) `src/` at commit [`f8a4e84a6ad19d08067bcc4825896cfb630d0d68`](https://github.com/K3-Capital/erc7540-wrapper/tree/f8a4e84a6ad19d08067bcc4825896cfb630d0d68/src) |
 | **Findings** | 1 total — 1 Low severity (L-01, resolved) |
