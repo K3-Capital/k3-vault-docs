@@ -34,7 +34,7 @@ This section follows a unit of capital through the K3 cbBTC Vault. Other K3 Vaul
 | MPC provider | Fordefi |
 | Default fees | 0% management, 5% performance; vault-specific terms prevail |
 
-![K3 cbBTC Vault flow of funds](../assets/k3-vault-flow.png)
+![K3 cbBTC Vault flow of funds](../assets/k3-vault-flow.svg)
 
 ### Deposit: cbBTC in, k3cbBTC out
 

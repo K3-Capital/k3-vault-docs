@@ -1,26 +1,39 @@
 # Summary
 
-- [Introduction](README.md)
-    - [Vaults: managed products for on-chain markets](introduction/why-k3-vaults.md)
-    - [Product Overview](introduction/cbbtc-vault.md)
-    - [FAQ](introduction/faq.md)
-- [Architecture](architecture/system-design.md)
-    - [Epoch lifecycle & settlement](architecture/settlement.md)
-    - [Security & trust assumptions](architecture/security-assumptions.md)
-    - [Security reviews & audits](architecture/security-reviews.md)
-    - [Invariants](architecture/invariants.md)
-- [Integration Guide](integration/quickstart.md)
-    - [Requesting a deposit](integration/request-deposit.md)
-    - [Claiming a deposit](integration/claim-deposit.md)
-    - [Requesting a redeem](integration/request-redeem.md)
-    - [Claiming a redeem](integration/claim-redeem.md)
-    - [Operator approvals](integration/operator-approvals.md)
-    - [Reading vault state](integration/reading-state.md)
-    - [Subgraph](integration/subgraph.md)
-    - [Error reference](integration/errors.md)
-- [Reference](reference/addresses.md)
-    - [Interfaces](reference/interfaces.md)
-    - [Events](reference/events.md)
-    - [Deployment registry](reference/deployment-registry.md)
+## Introduction
+
+- [Overview](README.md)
+- [Vaults](introduction/why-k3-vaults.md)
+- [Product Overview](introduction/cbbtc-vault.md)
+- [FAQ](introduction/faq.md)
+
+## Architecture
+
+- [System design](architecture/system-design.md)
+- [Epoch lifecycle & settlement](architecture/settlement.md)
+- [Security & trust assumptions](architecture/security-assumptions.md)
+- [Security reviews & audits](architecture/security-reviews.md)
+- [Invariants](architecture/invariants.md)
+
+## Integration Guide
+
+- [Quickstart](integration/quickstart.md)
+- [Requesting a deposit](integration/request-deposit.md)
+- [Claiming a deposit](integration/claim-deposit.md)
+- [Requesting a redeem](integration/request-redeem.md)
+- [Claiming a redeem](integration/claim-redeem.md)
+- [Operator approvals](integration/operator-approvals.md)
+- [Reading vault state](integration/reading-state.md)
+- [Subgraph](integration/subgraph.md)
+- [Error reference](integration/errors.md)
+
+## Reference
+
+- [Addresses](reference/addresses.md)
+- [Interfaces](reference/interfaces.md)
+- [Events](reference/events.md)
+- [Deployment registry](reference/deployment-registry.md)
+
+- [GitHub Repository](https://github.com/K3-Capital/k3-vault-contracts)
 - [llms.txt](https://k3-capital.github.io/k3-vault-docs/llms.txt)
 - [llms-full.txt](https://k3-capital.github.io/k3-vault-docs/llms-full.txt)
